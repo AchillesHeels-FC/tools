@@ -1,48 +1,34 @@
 # coding = utf-8
 import os
 import sys
-from collections import defaultdict
+import pandas as pd
 
 
 def read_file(path):
-    info_dict = defaultdict(list)
-    lines = open(path).readlines()
-    lines = list(map(lambda x: str(x).replace('\n', ''), lines))
-    for line in lines:
-        line_list = line.split('\t')
-        key = line_list[0]
-        values = line_list[1:]
-        info_dict[key] = values
-    return info_dict
+    file_type = os.path.splitext(path)[-1]
+    if file_type == '.csv':
+        df = pd.read_csv(path, sep=',', header=0)
+    else:
+        df = pd.read_table(path, sep=',', header=0)
+    return df
 
 
-def merage_func(x, y):
-    length = max([len(line) for line in list(y.values())])
-    for i in x:
-        if i in y:
-            y[i].extend(x[i])
-        else:
-            y[i].extend(['0'] * length)
-            y[i].extend(x[i])
-    return y
-
-
-def save_info(lines, path):
-    file = open(path, 'w')
-    for key in lines:
-        value = '\t'.join(lines[key])
-        file.write(str(key) + '\t' + value + '\n')
-    file.close()
+def merage_func(x, y, col_name):
+    df_x = x.copy()
+    df_y = y.copy()
+    df = pd.merge(df_x, df_y, how='outer', on=[col_name])
+    return df
 
 
 def main():
     file1 = sys.argv[1]
     file2 = sys.argv[2]
-    save_file = r'./res'
-    file1_dict = read_file(file1)
-    file2_dict = read_file(file2)
-    info_ob = merage_func(file1_dict, file2_dict)
-    save_info(info_ob, save_file)
+    colnames = sys.argv[3]
+    save_file = sys.argv[4]
+    file1_df = read_file(file1)
+    file2_df = read_file(file2)
+    res_df = merage_func(file1_df, file2_df, colnames)
+    res_df.to_csv(save_file)
 
 
 if __name__ == '__main__':
