@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from xgboost import XGBClassifier
 from collections import defaultdict
 from configparser import ConfigParser
+
 warnings.filterwarnings("ignore")
 
 
@@ -25,8 +26,8 @@ class DataProcess(object):
         去除重复值
         """
         df = dataframe.copy()
-        df.drop_duplicates(inplace=True) # 去除重复值
-        df.index = range(df.shape[0])    # 去重后恢复索引
+        df.drop_duplicates(inplace=True)  # 去除重复值
+        df.index = range(df.shape[0])  # 去重后恢复索引
         return df
 
     def fill_nan(self, dataframe):
@@ -56,7 +57,7 @@ class DataProcess(object):
 
     def feature_encoder(self, dataframe):
         """
-        离散特征编码
+        离散特征编码.
         """
         df = dataframe.copy()
         onehot_features = self.cfg.get('features', 'onehot_features')
@@ -140,6 +141,7 @@ class DataProcess(object):
         """
         分布占比及可视化
         """
+
         def dist_ratio(dataframe, feature, bins, classes):
             df = dataframe.copy()
             q = None
@@ -164,7 +166,7 @@ class DataProcess(object):
         plt.figure('Feature distribute', figsize=(30, 15))
         for index, fea in enumerate(target_features):
             try:
-                bin_type = self.cfg.get('distribute', fea+'_bins')
+                bin_type = self.cfg.get('distribute', fea + '_bins')
             except Exception as e:
                 bin_type = ''
             min_w = white_df[fea].min()
@@ -239,7 +241,7 @@ class DataProcess(object):
             sns.barplot(x='label', y=fea, data=df, hue='label')
         plt.show()
 
-    def feature_importance(self,  white_data, black_data):
+    def feature_importance(self, white_data, black_data):
         white_df = white_data.copy()
         black_df = black_data.copy()
         dataframe = pd.concat([white_df, black_df])
@@ -248,9 +250,9 @@ class DataProcess(object):
         y = [[0]] * white_df.shape[0] + [[1]] * black_df.shape[0]
         model = XGBClassifier(n_estimators=100, learning_rate=0.2)
         model.fit(x, y)
-        feature_impor_df = pd.DataFrame([model.feature_importances_], columns=columns, index=None)
+        feature_import_df = pd.DataFrame([model.feature_importances_], columns=columns, index=None)
         print('Feature importance table follow:')
-        print(feature_impor_df)
+        print(feature_import_df)
         print('\n')
 
 
