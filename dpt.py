@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 from xgboost import XGBClassifier
 from collections import defaultdict
 from configparser import ConfigParser
-
 warnings.filterwarnings("ignore")
 
 
@@ -199,8 +198,9 @@ class DataProcess(object):
                 dist_ratio(black_df, fea, bins, 'black')
                 plt.subplot(4, features_count / 4 + 1, index + 1)
                 plt.subplots_adjust(wspace=0.2, hspace=0.25)
-                sns.distplot(white_data[fea], bins, kde=True, color='b')
-                sns.distplot(black_data[fea], bins, kde=True, color='r')
+                sns.distplot(white_data[fea], bins, kde=True, color='b', label='White')
+                sns.distplot(black_data[fea], bins, kde=True, color='r', label='Black')
+                plt.legend()
             else:
                 print("Feature %s not have valid bins" % (fea))
             print('=========================================')
